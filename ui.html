@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 0;
+            height: 760px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .container {
+            background: white;
+            border-radius: 0px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .header {
+            background: linear-gradient(-17deg, #0471fe 0%, #c729f3 100%);
+            color: white;
+            padding: 8px;
+            flex-shrink: 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        .header-text h1 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 1px;
+        }
+
+        .header-text p {
+            opacity: 0.9;
+            font-size: 11px;
+        }
+
+        .scan-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .scan-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .scan-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .tab-button {
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+            color: #6c757d;
+            flex: 1;
+        }
+
+        .tab-button:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .tab-content {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Count Tab Styles */
+        .count-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            gap: 12px;
+        }
+
+        .count-title {
+            display: none;
+        }
+
+        .count-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            justify-content: space-between;
+        }
+
+        .filter-checkboxes {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 4px 8px;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .search-icon {
+            width: 12px;
+            height: 12px;
+            color: #6c757d;
+            margin-right: 4px;
+        }
+
+        .search-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 11px;
+            width: 100%;
+            color: #333;
+        }
+
+        .search-input::placeholder {
+            color: #6c757d;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 11px;
+            color: #6c757d;
+            white-space: nowrap;
+        }
+
+        .checkbox-group input {
+            margin: 0;
+        }
+
+        .total-count {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .total-count:hover {
+            background: #5a6fd8;
+        }
+
+        .results-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .table-container {
+            flex: 1;
+            overflow: auto;
+            padding-bottom: 40px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .table-header {
+            position: sticky;
+            top: 0;
+            background: #f8f9fa;
+            z-index: 10;
+        }
+
+        .table-header-row {
+            background: #f8f9fa;
+        }
+
+        .table-header-cell {
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid #e0e0e0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .table-header-cell:hover {
+            background: #e9ecef;
+        }
+
+        .table-header-cell.sorted {
+            color: #667eea;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s ease;
+        }
+
+        .table-row.has-hidden {
+            background-color: #fafafa;
+        }
+
+        .table-row:hover {
+            background: #f8f9fa;
+        }
+
+        .table-cell {
+            padding: 8px 12px;
+            font-size: 12px;
+            vertical-align: top;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .hidden-indicator {
+            color: #999;
+            font-style: italic;
+            font-size: 10px;
+        }
+
+        .serial-number {
+            width: 50px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .instance-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .instance-count {
+            text-align: right;
+            font-weight: 600;
+            color: #495057;
+            width: 70px;
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: #6c757d;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .scan-link {
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        .scan-link:hover {
+            color: #5a6fd8;
+        }
+
+        .page-name-display {
+            font-size: 12px;
+            margin-top: 8px;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* JSON/CSV Tab Styles */
+        .export-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .export-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .export-checkboxes {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .export-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #6c757d;
+        }
+
+        .export-checkbox-group input {
+            margin: 0;
+        }
+
+        .copy-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 4px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover:not(:disabled) {
+            background: #f8f9fa;
+        }
+
+        .copy-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .json-output {
+            flex: 1;
+            background: #f8f9fa;
+            background:#f8f6f0  ;
+            border: none;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 11px;
+            overflow: auto;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .csv-output {
+            background: #f8f9fa;
+            background: #f0f8f0;
+            border: none;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 11px;
+            overflow: auto;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .status-bar {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            font-size: 11px;
+            color: #6c757d;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+         a .copyright {
+            text-decoration: none;
+            margin: 0 4px;
+            color: #dd66ea;
+        }
+
+        a{text-decoration:none;}
+
+
+        /* Loading Spinner */
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading .spinner {
+            display: inline-block;
+        }
+
+        /* Scrollbar Styling */
+        .table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .json-output::-webkit-scrollbar,
+        .csv-output::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .json-output::-webkit-scrollbar-track,
+        .csv-output::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .json-output::-webkit-scrollbar-thumb,
+        .csv-output::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 38 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g filter="url(#filter0_d_21_1031)">
+                                <path d="M18.9668 1C21.0679 1 23.1486 1.4137 25.0898 2.21777C27.031 3.02185 28.7945 4.2008 30.2803 5.68652C31.766 7.17225 32.9449 8.93576 33.749 10.877C34.4253 12.5095 34.8234 14.2409 34.9336 16H28.5137C28.4176 15.0825 28.1903 14.1817 27.8359 13.3262C27.3535 12.1615 26.6463 11.1033 25.7549 10.2119C24.8635 9.3205 23.8053 8.6133 22.6406 8.13086C21.4759 7.64841 20.2275 7.40039 18.9668 7.40039C17.7061 7.40039 16.4577 7.64841 15.293 8.13086C14.1283 8.6133 13.0701 9.3205 12.1787 10.2119C11.2873 11.1033 10.5801 12.1615 10.0977 13.3262C9.74329 14.1817 9.51603 15.0825 9.41992 16H3C3.11017 14.2409 3.50833 12.5095 4.18457 10.877C4.98865 8.93576 6.16759 7.17225 7.65332 5.68652C9.13905 4.2008 10.9026 3.02185 12.8438 2.21777C14.785 1.4137 16.8656 1 18.9668 1Z" fill="white"/>
+                            </g>
+                            <g filter="url(#filter1_d_21_1031)">
+                                <path d="M9.41992 18C9.51603 18.9175 9.74329 19.8183 10.0977 20.6738C10.5801 21.8385 11.2873 22.8967 12.1787 23.7881C13.0701 24.6795 14.1283 25.3867 15.293 25.8691C16.4577 26.3516 17.7061 26.5996 18.9668 26.5996C20.2275 26.5996 21.4759 26.3516 22.6406 25.8691C23.8053 25.3867 24.8635 24.6795 25.7549 23.7881C26.6463 22.8967 27.3535 21.8385 27.8359 20.6738C28.1903 19.8183 28.4176 18.9175 28.5137 18H37V19H34.8359C34.6583 20.4138 34.2966 21.801 33.749 23.123C32.9449 25.0642 31.766 26.8277 30.2803 28.3135C28.7945 29.7992 27.031 30.9782 25.0898 31.7822C23.1486 32.5863 21.0679 33 18.9668 33C16.8656 33 14.785 32.5863 12.8438 31.7822C10.9026 30.9782 9.13905 29.7992 7.65332 28.3135C6.16759 26.8277 4.98865 25.0642 4.18457 23.123C3.63698 21.801 3.27531 20.4138 3.09766 19H1V18H9.41992Z" fill="white"/>
+                            </g>
+                            <g filter="url(#filter2_d_21_1031)">
+                                <circle cx="19" cy="17" r="4" fill="white"/>
+                            </g>
+                            <defs>
+                                <filter id="filter0_d_21_1031" x="2" y="0" width="33.9336" height="17" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                                    <feOffset/>
+                                    <feGaussianBlur stdDeviation="0.5"/>
+                                    <feComposite in2="hardAlpha" operator="out"/>
+                                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+                                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_21_1031"/>
+                                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_21_1031" result="shape"/>
+                                </filter>
+                                <filter id="filter1_d_21_1031" x="0" y="17" width="38" height="17" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                                    <feOffset/>
+                                    <feGaussianBlur stdDeviation="0.5"/>
+                                    <feComposite in2="hardAlpha" operator="out"/>
+                                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+                                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_21_1031"/>
+                                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_21_1031" result="shape"/>
+                                </filter>
+                                <filter id="filter2_d_21_1031" x="14" y="12" width="10" height="10" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                                    <feOffset/>
+                                    <feGaussianBlur stdDeviation="0.5"/>
+                                    <feComposite in2="hardAlpha" operator="out"/>
+                                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+                                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_21_1031"/>
+                                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_21_1031" result="shape"/>
+                                </filter>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="header-text">
+                        <h1>Instance Count</h1>
+                        <p>Track on this page</p>
+                    </div>
+                </div>
+                <button id="scan-btn" class="scan-btn">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    Scan Page
+                </button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="count">List</button>
+                <button class="tab-button" data-tab="json">JSON</button>
+                <button class="tab-button" data-tab="csv">CSV</button>
+            </div>
+
+            <!-- Count Tab -->
+            <div id="count-tab" class="tab-content active">
+                <div class="count-header">
+                    <div class="count-controls">
+                        <div class="filter-checkboxes">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="show-hidden">
+                                <label for="show-hidden">Show hidden</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="ignore-dotted" checked>
+                                <label for="ignore-dotted">Ignore .components</label>
+                            </div>
+                        </div>
+                        <div class="search-container">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                            <input type="text" class="search-input" placeholder="Search instances..." id="search-input">
+                        </div>
+                        <span id="total-count" class="total-count" title="Click to sort by count">Total: 0</span>
+                    </div>
+                </div>
+                <div class="results-container">
+                    <div class="table-container" id="table-container">
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <p>Click <span class="scan-link" id="scan-link">Scan Page</span> to analyze instances</p>
+                            <div class="page-name-display" id="current-page-display">Current page: this page</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JSON Tab -->
+            <div id="json-tab" class="tab-content">
+                <div class="export-content">
+                    <div class="export-controls">
+                        <div class="export-checkboxes">
+                            <div class="export-checkbox-group">
+                                <input type="checkbox" id="show-hidden-json">
+                                <label for="show-hidden-json">Include hidden</label>
+                            </div>
+                            <div class="export-checkbox-group">
+                                <input type="checkbox" id="ignore-dotted-json" checked>
+                                <label for="ignore-dotted-json">Ignore .components</label>
+                            </div>
+                        </div>
+                        <button id="copy-json-btn" class="copy-btn" disabled>📋 Copy</button>
+                    </div>
+                    <pre id="json-output" class="json-output">Scan the page first, then switch to this tab to generate JSON data</pre>
+                </div>
+            </div>
+
+            <!-- CSV Tab -->
+            <div id="csv-tab" class="tab-content">
+                <div class="export-content">
+                    <div class="export-controls">
+                        <div class="export-checkboxes">
+                            <div class="export-checkbox-group">
+                                <input type="checkbox" id="show-hidden-csv">
+                                <label for="show-hidden-csv">Include hidden</label>
+                            </div>
+                            <div class="export-checkbox-group">
+                                <input type="checkbox" id="ignore-dotted-csv" checked>
+                                <label for="ignore-dotted-csv">Ignore .components</label>
+                            </div>
+                        </div>
+                        <button id="copy-csv-btn" class="copy-btn" disabled>📋 Copy</button>
+                    </div>
+                    <pre id="csv-output" class="csv-output">Scan the page first, then switch to this tab to generate CSV data</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <span id="status-message">Ready to scan</span>
+            <a href="www.ncoreux.com" target="_blank"><span class="copyright">&copy; <strong>ncoreUX</strong></span></a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // Initialize variables
+            var scanBtn = document.getElementById('scan-btn');
+            var scanLink = document.getElementById('scan-link');
+            var copyJsonBtn = document.getElementById('copy-json-btn');
+            var copyCsvBtn = document.getElementById('copy-csv-btn');
+            var statusMessage = document.getElementById('status-message');
+            var totalCount = document.getElementById('total-count');
+            var jsonOutput = document.getElementById('json-output');
+            var csvOutput = document.getElementById('csv-output');
+            var tabButtons = document.querySelectorAll('.tab-button');
+            var tabContents = document.querySelectorAll('.tab-content');
+            var showHiddenCheckbox = document.getElementById('show-hidden');
+            var showHiddenJsonCheckbox = document.getElementById('show-hidden-json');
+            var showHiddenCsvCheckbox = document.getElementById('show-hidden-csv');
+            var ignoreDottedCheckbox = document.getElementById('ignore-dotted');
+            var ignoreDottedJsonCheckbox = document.getElementById('ignore-dotted-json');
+            var ignoreDottedCsvCheckbox = document.getElementById('ignore-dotted-csv');
+            var searchInput = document.getElementById('search-input');
+            var tableContainer = document.getElementById('table-container');
+            var currentPageDisplay = document.getElementById('current-page-display');
+
+            var currentData = null;
+            var jsonData = null;
+            var csvData = null;
+            var includeHidden = false;
+            var ignoreDotted = true;
+            var sortBy = 'count';
+            var sortOrder = 'desc';
+            var allInstances = [];
+            var filteredInstances = [];
+            var currentPage = 'this page';
+
+            // Event Listeners
+            tabButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var tabName = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabButtons.forEach(function(btn) { 
+                        btn.classList.remove('active'); 
+                    });
+                    this.classList.add('active');
+                    
+                    tabContents.forEach(function(tab) { 
+                        tab.classList.remove('active'); 
+                    });
+                    document.getElementById(tabName + '-tab').classList.add('active');
+
+                    // Generate content for export tabs
+                    if (tabName === 'json' && currentData) {
+                        generateJSON();
+                    } else if (tabName === 'csv' && currentData) {
+                        generateCSV();
+                    }
+
+                    updateCopyButtons(tabName);
+                });
+            });
+
+            scanLink.addEventListener('click', scanInstances);
+            scanBtn.addEventListener('click', scanInstances);
+
+            showHiddenCheckbox.addEventListener('change', function() {
+                includeHidden = this.checked;
+                applyFilter();
+            });
+
+            ignoreDottedCheckbox.addEventListener('change', function() {
+                ignoreDotted = this.checked;
+                applyFilter();
+            });
+
+            showHiddenJsonCheckbox.addEventListener('change', generateJSON);
+            ignoreDottedJsonCheckbox.addEventListener('change', generateJSON);
+            showHiddenCsvCheckbox.addEventListener('change', generateCSV);
+            ignoreDottedCsvCheckbox.addEventListener('change', generateCSV);
+
+            searchInput.addEventListener('input', filterInstances);
+            totalCount.addEventListener('click', toggleSort);
+
+            copyJsonBtn.addEventListener('click', function() {
+                copyToClipboard(jsonOutput.textContent, copyJsonBtn);
+            });
+
+            copyCsvBtn.addEventListener('click', function() {
+                copyToClipboard(csvOutput.textContent, copyCsvBtn);
+            });
+
+            // Functions
+            function scanInstances() {
+                scanBtn.disabled = true;
+                scanBtn.innerHTML = '<div class="spinner"></div>Scanning...';
+                statusMessage.textContent = 'Scanning page for instances...';
+                statusMessage.classList.add('loading');
+                
+                parent.postMessage({ 
+                    pluginMessage: { 
+                        type: 'scan-instances'
+                    } 
+                }, '*');
+            }
+
+            function applyFilter() {
+                if (!currentData) return;
+                
+                parent.postMessage({ 
+                    pluginMessage: { 
+                        type: 'apply-filter',
+                        includeHidden: includeHidden,
+                        ignoreDotted: ignoreDotted
+                    } 
+                }, '*');
+            }
+
+            function filterInstances() {
+                var searchTerm = searchInput.value.toLowerCase().trim();
+                if (searchTerm === '') {
+                    filteredInstances = allInstances.slice();
+                } else {
+                    filteredInstances = allInstances.filter(function(instance) {
+                        return instance.name.toLowerCase().indexOf(searchTerm) !== -1;
+                    });
+                }
+                renderInstancesTable(filteredInstances);
+            }
+
+            function generateJSON() {
+                if (!currentData) return;
+                
+                statusMessage.textContent = 'Generating JSON export...';
+                parent.postMessage({ 
+                    pluginMessage: { 
+                        type: 'export-json',
+                        includeHidden: showHiddenJsonCheckbox.checked,
+                        ignoreDotted: ignoreDottedJsonCheckbox.checked
+                    } 
+                }, '*');
+            }
+
+            function generateCSV() {
+                if (!currentData) return;
+                
+                statusMessage.textContent = 'Generating CSV export...';
+                parent.postMessage({ 
+                    pluginMessage: { 
+                        type: 'export-csv',
+                        includeHidden: showHiddenCsvCheckbox.checked,
+                        ignoreDotted: ignoreDottedCsvCheckbox.checked
+                    } 
+                }, '*');
+            }
+
+            function toggleSort() {
+                if (sortBy === 'count') {
+                    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortBy = 'count';
+                    sortOrder = 'desc';
+                }
+                if (filteredInstances.length > 0) {
+                    renderInstancesTable(filteredInstances);
+                }
+            }
+
+            function updateCopyButtons(activeTab) {
+                copyJsonBtn.disabled = activeTab !== 'json' || !jsonData;
+                copyCsvBtn.disabled = activeTab !== 'csv' || !csvData;
+            }
+
+            function copyToClipboard(text, button) {
+                var textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                var originalText = button.innerHTML;
+                button.innerHTML = '✓ Copied!';
+                button.disabled = true;
+                
+                setTimeout(function() {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }
+
+            function sortInstances(instances) {
+                return instances.sort(function(a, b) {
+                    var comparison = sortBy === 'name' ? 
+                        a.name.localeCompare(b.name) : a.count - b.count;
+                    return sortOrder === 'asc' ? comparison : -comparison;
+                });
+            }
+
+            function renderInstancesTable(instances) {
+                var sortedInstances = sortInstances(instances.slice());
+                var rowCount = instances.length;
+                
+                var html = '<table class="results-table">' +
+                    '<thead class="table-header">' +
+                    '<tr class="table-header-row">' +
+                    '<th class="table-header-cell serial-number">(' + rowCount + ')</th>' +
+                    '<th class="table-header-cell' + (sortBy === 'name' ? ' sorted' : '') + '" id="sort-by-name">Instance Name</th>' +
+                    '<th class="table-header-cell' + (sortBy === 'count' ? ' sorted' : '') + ' instance-count" id="sort-by-count">Count</th>' +
+                    '</tr></thead><tbody>';
+                
+                sortedInstances.forEach(function(instance, index) {
+                    var hasHidden = instance.hiddenCount > 0;
+                    var hiddenClass = hasHidden ? 'has-hidden' : '';
+                    var hiddenIndicator = hasHidden ? ' <span class="hidden-indicator">(hidden-' + instance.hiddenCount + ')</span>' : '';
+                    
+                    html += '<tr class="table-row ' + hiddenClass + '">' +
+                        '<td class="table-cell serial-number">' + (index + 1) + '</td>' +
+                        '<td class="table-cell instance-name" title="' + escapeHtml(instance.name) + '">' +
+                        escapeHtml(instance.name) + hiddenIndicator + '</td>' +
+                        '<td class="table-cell instance-count">' + instance.count + '</td></tr>';
+                });
+                
+                html += '</tbody></table>';
+                tableContainer.innerHTML = html;
+                
+                // Add sorting event listeners
+                document.getElementById('sort-by-name').addEventListener('click', function() {
+                    sortBy = 'name';
+                    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                    renderInstancesTable(instances);
+                });
+                
+                document.getElementById('sort-by-count').addEventListener('click', function() {
+                    sortBy = 'count';
+                    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+                    renderInstancesTable(instances);
+                });
+            }
+
+            function escapeHtml(text) {
+                var div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Message handler
+            window.onmessage = function(event) {
+                if (event.data.pluginMessage) {
+                    var message = event.data.pluginMessage;
+                    
+                    statusMessage.classList.remove('loading');
+                    scanBtn.disabled = false;
+                    scanBtn.innerHTML = 'Scan Page';
+                    
+                    if (message.type === 'scan-results') {
+                        currentData = message.data;
+                        updateResultsUI(message.data);
+                    } else if (message.type === 'export-json') {
+                        jsonData = message.data;
+                        showExportData(message.data, 'json');
+                    } else if (message.type === 'export-csv') {
+                        csvData = message.data;
+                        showExportData(message.data, 'csv');
+                    } else if (message.type === 'error') {
+                        showError(message.message);
+                    }
+                }
+            };
+
+            function updateResultsUI(data) {
+                totalCount.textContent = 'Total: ' + data.totalInstances;
+                allInstances = data.instances;
+                filteredInstances = allInstances.slice();
+                currentPage = data.pageName;
+                
+                currentPageDisplay.textContent = 'Current page: "' + currentPage + '"';
+                
+                if (data.instances.length === 0) {
+                    tableContainer.innerHTML = '<div class="empty-state">' +
+                        '<div class="empty-icon">🔍</div>' +
+                        '<p>Click <span class="scan-link" id="scan-link">Scan Page</span> to analyze instances</p>' +
+                        '<div class="page-name-display">Current page: "' + currentPage + '"</div></div>';
+                    
+                    document.getElementById('scan-link').addEventListener('click', scanInstances);
+                } else {
+                    renderInstancesTable(filteredInstances);
+                }
+                
+                statusMessage.textContent = data.totalInstances + ' instances / ' + data.instances.length + ' components';
+            }
+
+            function showExportData(data, type) {
+                if (type === 'json') {
+                    jsonOutput.textContent = JSON.stringify(data, null, 2);
+                    statusMessage.textContent = 'JSON export ready';
+                } else if (type === 'csv') {
+                    csvOutput.textContent = data.csv;
+                    statusMessage.textContent = 'CSV export ready';
+                }
+                
+                updateCopyButtons(type);
+            }
+
+            function showError(errorMessage) {
+                statusMessage.textContent = 'Error: ' + errorMessage;
+                tableContainer.innerHTML = '<div class="empty-state">' +
+                    '<div class="empty-icon">❌</div>' +
+                    '<p>' + escapeHtml(errorMessage) + '</p></div>';
+            }
+        })();
+    </script>
+</body>
+</html>
